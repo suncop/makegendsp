@@ -18,64 +18,66 @@ gendsp_string = '{"patcher" : \n	{\n		"fileversion" : 1,\n		"appversion" : \n		{
 # read the .genexpr file:
 
 f = open(fullname, "r")
-string1 = f.read()
+genexpr_string = f.read()
 f.close()
 
 # determine how many inputs and outputs there are:
 
-ins = 1
-outs = 1
+in_num = 1
+out_num = 1
 for i in range(2,65):
-	if 'in{}'.format(i) in string1 and i > ins :
-		ins = i
-	if 'out{}'.format(i) in string1 and i > outs :
-		outs = i
+	if 'in{}'.format(i) in genexpr_string and i > in_num :
+		in_num = i
+	if 'out{}'.format(i) in genexpr_string and i > out_num :
+		out_num = i
 
 # determine the width of the codebox and the spacing for the in and out objects
 
-if ins < 5 and outs < 5 :
-	width = 200.0
-elif ins > outs :
-	width = ins * 50.0
+if in_num < 6 and out_num < 6 :
+	codebox_width = 200.0
+elif in_num > out_num :
+	codebox_width = in_num * 40.0
 else :
-	width = outs * 50.0
-if ins != 1:
-	inspacing = (width-19)/(ins-1)
+	codebox_width = out_num * 40.0
+
+if in_num != 1:
+	in_spacing = (codebox_width-19)/(in_num-1)
 else :
-	inspacing = 0;
-if outs != 1 :
-	outspacing = (width-19)/(outs-1)
+	in_spacing = 0;
+	
+if out_num != 1 :
+	out_spacing = (codebox_width-19)/(out_num-1)
 else :
-	outspacing = 0;
+	out_spacing = 0;
 
 # generate the codebox object :
 
-gendsp_string = gendsp_string + json.dumps({ 'box' : { 'code' : string1, 'fontname' : 'Arial', 'fontsize' : 12.0, 'id' : 'codebox1', 'maxclass' : 'codebox', 'numinlets' : ins, 'numoutlets' : outs, 'patching_rect' : [ 20, 50.0, width, 200.0 ] } },  sort_keys=True, indent=4)
+gendsp_string = gendsp_string + json.dumps({ 'box' : { 'code' : genexpr_string, 'fontname' : 'Arial', 'fontsize' : 12.0, 'id' : 'codebox1', 'maxclass' : 'codebox', 'numinlets' : in_num, 'numoutlets' : out_num, 'patching_rect' : [ 20, 50.0, codebox_width, 200.0 ] } },  sort_keys=True, indent=4)
 
 # generate the in objects :
 
-for i in range(ins):
-	gendsp_string = gendsp_string + ',\n' + json.dumps({'box' : { 'fontname' : 'Arial', 'fontsize' : 12.0, 'id' : 'in{}'.format(i+1), 'maxclass' : 'newobj', 'numinlets' : 0, 'numoutlets' : 1, 'patching_rect' : [(20.0 + i*inspacing), 20.0, 35.0, 20.0], 'text' : 'in {}'.format(i+1)}}, sort_keys=True, indent=4)
+for i in range(in_num):
+	gendsp_string = gendsp_string + ',\n' + json.dumps({'box' : { 'fontname' : 'Arial', 'fontsize' : 12.0, 'id' : 'in{}'.format(i+1), 'maxclass' : 'newobj', 'numinlets' : 0, 'numoutlets' : 1, 'patching_rect' : [(20.0 + i*in_spacing), 20.0, 35.0, 20.0], 'text' : 'in {}'.format(i+1)}}, sort_keys=True, indent=4)
 
 # generate the out objects :
 
-for i in range(outs):
-	gendsp_string = gendsp_string + ',\n' + json.dumps({'box' : { 'fontname' : 'Arial', 'fontsize' : 12.0, 'id' : 'out{}'.format(i+1), 'maxclass' : 'newobj', 'numinlets' : 1, 'numoutlets' : 0, 'outlettype' : [ "" ],'patching_rect' : [(20.0 + i*outspacing), 260.0, 35.0, 20.0], 'text' : 'out {}'.format(i+1)}}, sort_keys=True, indent=4)
+for i in range(out_num):
+	gendsp_string = gendsp_string + ',\n' + json.dumps({'box' : { 'fontname' : 'Arial', 'fontsize' : 12.0, 'id' : 'out{}'.format(i+1), 'maxclass' : 'newobj', 'numinlets' : 1, 'numoutlets' : 0, 'outlettype' : [ "" ],'patching_rect' : [(20.0 + i*out_spacing), 260.0, 35.0, 20.0], 'text' : 'out {}'.format(i+1)}}, sort_keys=True, indent=4)
 
 gendsp_string = gendsp_string + '],\n "lines" : [\n'
 
 # generate the patch cords :
 
-for i in range(ins) :
+for i in range(in_num) :
 	gendsp_string = gendsp_string + json.dumps({ 'patchline' : { 'destination' : [ 'codebox1', i ], 'disabled' : 0, 'hidden' : 0, 'source' : ['in{}'.format(i+1), 0] } }, sort_keys=True, indent=4)
-	if i != ins-1 :
+	if i != in_num-1 :
 		gendsp_string = gendsp_string + ',\n'
 
 gendsp_string = gendsp_string + ',\n'
 
-for i in range(outs) :
+for i in range(out_num) :
 	gendsp_string = gendsp_string + json.dumps({ 'patchline' : { 'destination' : [ 'out{}'.format(i+1), 0], 'disabled' : 0, 'hidden' : 0, 'source' : [ 'codebox1', i] } }, sort_keys=True, indent=4)
-	if i != outs-1 :
+	if i != out_num-1 :
 		gendsp_string = gendsp_string + ',\n'
 
 # finish the file and write it
