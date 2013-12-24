@@ -26,9 +26,9 @@ f.close()
 in_num = 1
 out_num = 1
 for i in range(2,65):
-	if 'in{}'.format(i) in genexpr_string and i > in_num :
+	if 'in{0}'.format(i) in genexpr_string and i > in_num :
 		in_num = i
-	if 'out{}'.format(i) in genexpr_string and i > out_num :
+	if 'out{0}'.format(i) in genexpr_string and i > out_num :
 		out_num = i
 
 # determine the width of the codebox and the spacing for the in and out objects
@@ -57,26 +57,26 @@ gendsp_string = gendsp_string + json.dumps({ 'box' : { 'code' : genexpr_string, 
 # generate the in objects :
 
 for i in range(in_num):
-	gendsp_string = gendsp_string + ',\n' + json.dumps({'box' : { 'fontname' : 'Arial', 'fontsize' : 12.0, 'id' : 'in{}'.format(i+1), 'maxclass' : 'newobj', 'numinlets' : 0, 'numoutlets' : 1, 'patching_rect' : [(20.0 + i*in_spacing), 20.0, 35.0, 20.0], 'text' : 'in {}'.format(i+1)}}, sort_keys=True, indent=4)
+	gendsp_string = gendsp_string + ',\n' + json.dumps({'box' : { 'fontname' : 'Arial', 'fontsize' : 12.0, 'id' : 'in{0}'.format(i+1), 'maxclass' : 'newobj', 'numinlets' : 0, 'numoutlets' : 1, 'patching_rect' : [(20.0 + i*in_spacing), 20.0, 35.0, 20.0], 'text' : 'in {0}'.format(i+1)}}, sort_keys=True, indent=4)
 
 # generate the out objects :
 
 for i in range(out_num):
-	gendsp_string = gendsp_string + ',\n' + json.dumps({'box' : { 'fontname' : 'Arial', 'fontsize' : 12.0, 'id' : 'out{}'.format(i+1), 'maxclass' : 'newobj', 'numinlets' : 1, 'numoutlets' : 0, 'outlettype' : [ "" ],'patching_rect' : [(20.0 + i*out_spacing), 260.0, 35.0, 20.0], 'text' : 'out {}'.format(i+1)}}, sort_keys=True, indent=4)
+	gendsp_string = gendsp_string + ',\n' + json.dumps({'box' : { 'fontname' : 'Arial', 'fontsize' : 12.0, 'id' : 'out{0}'.format(i+1), 'maxclass' : 'newobj', 'numinlets' : 1, 'numoutlets' : 0, 'outlettype' : [ "" ],'patching_rect' : [(20.0 + i*out_spacing), 260.0, 35.0, 20.0], 'text' : 'out {0}'.format(i+1)}}, sort_keys=True, indent=4)
 
 gendsp_string = gendsp_string + '],\n "lines" : [\n'
 
 # generate the patch cords :
 
 for i in range(in_num) :
-	gendsp_string = gendsp_string + json.dumps({ 'patchline' : { 'destination' : [ 'codebox1', i ], 'disabled' : 0, 'hidden' : 0, 'source' : ['in{}'.format(i+1), 0] } }, sort_keys=True, indent=4)
+	gendsp_string = gendsp_string + json.dumps({ 'patchline' : { 'destination' : [ 'codebox1', i ], 'disabled' : 0, 'hidden' : 0, 'source' : ['in{0}'.format(i+1), 0] } }, sort_keys=True, indent=4)
 	if i != in_num-1 :
 		gendsp_string = gendsp_string + ',\n'
 
 gendsp_string = gendsp_string + ',\n'
 
 for i in range(out_num) :
-	gendsp_string = gendsp_string + json.dumps({ 'patchline' : { 'destination' : [ 'out{}'.format(i+1), 0], 'disabled' : 0, 'hidden' : 0, 'source' : [ 'codebox1', i] } }, sort_keys=True, indent=4)
+	gendsp_string = gendsp_string + json.dumps({ 'patchline' : { 'destination' : [ 'out{0}'.format(i+1), 0], 'disabled' : 0, 'hidden' : 0, 'source' : [ 'codebox1', i] } }, sort_keys=True, indent=4)
 	if i != out_num-1 :
 		gendsp_string = gendsp_string + ',\n'
 
@@ -84,6 +84,6 @@ for i in range(out_num) :
 
 gendsp_string = gendsp_string + '\n]\n}\n}\n'
 
-f = open('{}.gendsp'.format(shortname), "w")
+f = open('{0}.gendsp'.format(shortname), "w")
 f.write(gendsp_string)
 f.close()
